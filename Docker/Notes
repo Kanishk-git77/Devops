@@ -1,0 +1,111 @@
+-------------------------------------------------------------------------------------------
+# Run a Docker image
+- docker run nginx
+
+Containers are meant to run a specific task. Not to host a OS.
+Once task completed, container exits.
+
+# Running containers
+- docker ps
+
+# Running and exited containers
+- docker ps -a
+
+# Stop a container
+- docker stop <container_name/container_id>
+
+# Remove container
+- docker rm <container_name/container_id>
+
+# List of images 
+- docker images
+
+# Remove image
+- docker rmi <image_name>
+**Make sure to delete all dependent conatiners**
+
+# Remove many docker stopped containers & images using single command
+- Containers
+    - docker rm $(docker ps -qa)       * -q stands for quiet mode(displays IDs only).
+- Images
+    - docker rmi $(docker images -q)
+
+# Pull/Download the image
+- docker pull <image_name>
+
+# Append a command
+- docker run ubuntu <command>
+    - ex. docker run ubuntu sleep 5
+
+# Attach/Detach a container
+- docker run <image_repo>  ---> Attached mode(Default).
+- docker run -d image_repo>  ---> Detched mode (Free the console).
+- docker attach <container_id>  --> Reattach the container to the console.
+
+**By default Docker container doesnt listen to Standard Input(STDIN).**
+# Run container in interactive mode
+- docker run -it ubuntu         * -i = interactive mode 
+                                * -t = pseudo terminal
+
+# Execute a command in a container
+- docker exec <container_id> <command>
+    - ex. docker exec axc8sa7 cat /etc/os-release
+
+# Run a container of specific version
+- docker run <image_name>:<version>
+    - ex. docker run redis:4.0      * `<image_name>:<version>` --> Also known as Tag.
+
+
+**PORT mapping or PORT Publishing**
+
+# Map a Port of running container to Docker host
+- docker run -p <localhost_port>:<container_port> <image_name>
+    - ex1. docker run -p 80:5000 kmankar/myapp01
+    - ex2. docker run -p 3306:3306 mysql
+
+Now we can access the container using PORT=80 on docker host(localhost).
+
+
+**Volume Mapping**
+To persist any changes happens to any file inside the container.
+
+# Mapping a Volume
+- docker run -v <volume_dir_on_docker_host>:<mapped_dir_inside_container> myapp01
+    - ex. docker run -v /opt/datadir:/var/lib/psql/15/data postgresql-15
+
+NOTE: Volume maybe a external device.
+
+# Additional Details about a Container
+- docker inspect <container_id>     # By default in JSON.
+
+# See Logs of a Running Container
+- docker logs <container_name/container_id>
+
+-------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------
+
+**Docker Images**
+
+# Create an Image using Dockerfile
+
+`
+FROM ubuntu                                                    ---> Layer 1
+
+RUN apt-get update                                             ---> Layer 2
+RUN apt-get install python
+
+RUN pip install flask                                          ---> Layer 3
+RUN pip install flask-mysql
+
+COPY . /opt/source-code                                        ---> Layer 4
+
+ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run         ---> Layer 5
+`
+# Build the Dockerfile
+- docker build Dockerfile -t kmankar/app01
+
+# Push it to the DockerHub
+- docker push kmankar/app01
+
+

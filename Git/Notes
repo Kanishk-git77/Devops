@@ -1,0 +1,260 @@
+Git
+-----
+
+Three areas of Git
+- Working area ---> untracked files/dir
+- Staging area ---> tracked files/dir
+- Commit area  ---> commited files/dir
+
+Initialize a GIt repository
+- git init 
+
+Add files to staging area(ready to commit)
+- git add <file_name>      (git add . --> this will add all the files into the staging area)
+
+Commit the changes
+- git commit -m "Any useful message"
+
+    Q Tip:
+    - Always make your commit message meaningful which would be easy for a developer for making future changes on same file.
+    - Changes that are related are part of the same commit. Unrelated changes should have diffrent commit.
+
+Check the status of a git repository
+- git status
+
+Move a file out of the staging area
+- git restore --staged <file_name>
+
+Make git to not track any file
+- Copy the file name into .gitignore file
+- Ex. echo "<file_name>" >> .gitignore
+
+Logging of the commits
+- git log
+
+Git Branches
+- Master is the default branch
+    Create a New branch
+    - git branch <branch_name>
+    Switch to existing branch
+    - git checkout <branch_name>
+    Create new branch and switch to that branch
+    - git checkout -b <branch_name>
+    Delete a branch
+    - git checkout -b <branch_name>
+    List all Branches
+    - git branch
+
+Merging a branch in Git
+- git merge <branch_name>          where (Branch_name is the branch where we want to merge)
+
+Initialize the remote repository
+- git remote add origin https://..remote.../repo/link       (origin is the alias name for the remote repository)
+
+List all remote repository
+- git remote -v
+
+Pushing data into remote repo
+- git push <alias_remote_repo> <branch_name>
+
+Cloning the repository
+- git clone [ssh link/http link]
+
+Fetch command
+- git fetch origin <branch_name>
+    Fetch is used to update the local repo as remote repo is gets updated by any PRs.
+    It points to the latest change at the origin/master branch.
+    We can merge the local/master to origin/master
+        - git merge origin/master
+
+    We can do this with the help of single command - Pull command in git
+    - git pull origin master
+
+Rebasing in Git
+- In rebasing we actually move the current branch on top of another branch(mostly master) so that we can see the current new changes of that branch.
+- We are copying commit from one branch to another branch.
+
+Command
+- git rebase <branch_name>
+
+- Interactive rebase helps to rebase/combined the set commit into a new commit
+Command
+- git rebase -i HEAD~N            where  (N could be the number of commits before head)
+      
+    - We select squash before the commits which we want to combined into a single commit
+
+Ex. 
+                commit 4 (ds12)
+                |
+                |
+                |
+                commit 3 (f9efw)
+                |
+                |
+                |
+                commit 2 (gbrg9)
+                |
+                |
+                |
+                commit 1 (awiho21) <- Squashing commit 4 (ds12), commit 3 (f9efw), and commit 2 (gbrg9) into this commit
+
+
+
+Cherry-Picking in git
+- When youn want to copy a commit from feature branch to the main branch.
+
+Command
+- git cherry-pick <commit hash>
+
+Resetting and reverting
+
+Revert a change
+- git revert <commit_hash>
+    It will create another commit log in which all the changes are reverted.
+
+Ex.
+        sarah (master)$ git log
+        commit 21f9717e973c8f5820e8a8d2e3018baa5ff8e744 (HEAD -> master)
+        Author: sarah <sarah@example.com>
+        Date:   Sat Feb 17 14:56:38 2024 +0000
+
+            Add author info to stories
+
+        commit ee99c05f385b6d09f52209a20afac0486ffddddb
+        Author: sarah <sarah@example.com>
+        Date:   Sat Feb 17 14:31:34 2024 +0000
+
+            Add stories
+        sarah (master)$ 
+
+        sarah (master)$ gir revert 21f9717e973c8f5820e8a8d2e3018baa5ff8e744
+        bash: gir: command not found
+        sarah (master)$ git revert 21f9717e973c8f5820e8a8d2e3018baa5ff8e744
+        [master 24c62ef] Revert "Add author info to stories"
+        5 files changed, 4 insertions(+), 14 deletions(-)
+        sarah (master)$ 
+
+        sarah (master)$ git log
+        commit 24c62eff27923c5b2dce827945283aaf2711f6ca (HEAD -> master)
+        Author: sarah <sarah@example.com>
+        Date:   Sat Feb 17 15:01:35 2024 +0000
+
+            Revert "Add author info to stories"
+            
+            This reverts commit 21f9717e973c8f5820e8a8d2e3018baa5ff8e744.
+
+        commit 21f9717e973c8f5820e8a8d2e3018baa5ff8e744
+        Author: sarah <sarah@example.com>
+        Date:   Sat Feb 17 14:56:38 2024 +0000
+
+            Add author info to stories
+
+        commit ee99c05f385b6d09f52209a20afac0486ffddddb
+        Author: sarah <sarah@example.com>
+        Date:   Sat Feb 17 14:31:34 2024 +0000
+
+            Add stories
+
+        sarah (master)$ 
+        sarah (master)$ git status
+        On branch master
+        nothing to commit, working tree clean
+
+
+How to reset the commit?
+Command
+- git reset --soft HEAD~N          where (N is number of commit you want to reset)
+    - Using --soft flag, we are resetting the changes but we can see those changes by using git status command. It will save those changes and won't delete it.
+
+Ex.
+            sarah (master)$ 
+            sarah (master)$ git log
+            commit e93bcae4978c885bce251b5712fdca88a0bd268d (HEAD -> master)
+            Author: sarah <sarah@example.com>
+            Date:   Sat Feb 17 15:04:02 2024 +0000
+
+                Finish story
+
+            commit 24c62eff27923c5b2dce827945283aaf2711f6ca
+            Author: sarah <sarah@example.com>
+            Date:   Sat Feb 17 15:01:35 2024 +0000
+
+                Revert "Add author info to stories"
+                
+                This reverts commit 21f9717e973c8f5820e8a8d2e3018baa5ff8e744.
+
+            commit 21f9717e973c8f5820e8a8d2e3018baa5ff8e744
+            Author: sarah <sarah@example.com>
+            Date:   Sat Feb 17 14:56:38 2024 +0000
+
+                Add author info to stories
+
+            commit ee99c05f385b6d09f52209a20afac0486ffddddb
+            Author: sarah <sarah@example.com>
+            Date:   Sat Feb 17 14:31:34 2024 +0000
+
+                Add stories
+
+            sarah (master)$ 
+            sarah (master)$ git reset --soft HEAD~1
+
+            sarah (master)$ git log
+            commit 24c62eff27923c5b2dce827945283aaf2711f6ca (HEAD -> master)
+            Author: sarah <sarah@example.com>
+            Date:   Sat Feb 17 15:01:35 2024 +0000
+
+                Revert "Add author info to stories"
+                
+                This reverts commit 21f9717e973c8f5820e8a8d2e3018baa5ff8e744.
+
+            commit 21f9717e973c8f5820e8a8d2e3018baa5ff8e744
+            Author: sarah <sarah@example.com>
+            Date:   Sat Feb 17 14:56:38 2024 +0000
+
+                Add author info to stories
+
+            commit ee99c05f385b6d09f52209a20afac0486ffddddb
+            Author: sarah <sarah@example.com>
+            Date:   Sat Feb 17 14:31:34 2024 +0000
+
+                Add stories
+            sarah (master)$ 
+
+            sarah (master)$ git status
+            On branch master
+            Changes to be committed:
+            (use "git restore --staged <file>..." to unstage)
+                    modified:   hare-and-tortoise.txt
+
+            sarah (master)$ 
+
+- git reset --hard HEAD~N
+    - Using --hard flag, we are resetting the changes and completely delete it from the git.
+
+Stashing in Git
+- Using stashing we can stash our changes from the working area to a stash area from where we can get back our changes whenever we want.
+
+Command
+- git stash 
+
+Pop the recent changes from the stash
+- git stash pop
+
+List all the stashed changes
+- git stash list
+
+See particular stash
+- git stash show stash@{N}                 where (N is the index of changes stored in stash)
+
+Pop the particular stash
+- git stash pop stash@{N}
+
+Reflog in git
+- It is logging in git which shows all the actions performed (merges, reverts, resets etc) in the current git repo.
+
+Check the Reflogs
+- git reflog
+
+Reset your git repo to the particular state
+- git reset --hard <commit_hash>        (Commit hash of that particular git command in reflog)
+

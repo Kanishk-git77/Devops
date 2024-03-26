@@ -1,0 +1,134 @@
+---
+# Some example K8s Manifest files 
+
+``````
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: dev-nginx-pod
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:latest
+``````
+``````
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: httpd
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: httpd_app
+      template:
+        metadata:
+          name: pod-httpd
+          labels:
+            app: httpd_app
+        spec:
+          containers:
+            - name: httpd-container
+              image: httpd:latest
+``````
+``````
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: httpd-pod
+      labels:
+        app: httpd
+    spec:
+      containers:
+      - name: httpd-container
+        image: httpd:latest
+        resources:
+          requests:
+            memory: "15Mi"
+            cpu: "100m"
+          limits:
+            memory: "20Mi"
+            cpu: "100m"
+``````
+```bash
+    apiVersion: apps/v1
+    kind: ReplicaSet
+    metadata:
+      name: httpd-replicaset
+    spec:
+      replicas: 4
+      selector:
+        matchLabels:
+          app: httpd_app
+          type: front-end
+      template:
+        metadata:
+          labels:
+            app: httpd_app
+            type: front-end
+        spec:
+          containers:
+          - name: httpd-container
+            image: httpd:latest
+```
+## Cron Job Manifest file**
+```bash
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nautilus
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cron-nautilus
+            image: httpd:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - date; echo Welcome to xfusioncorp!
+          restartPolicy: OnFailure
+
+```
+```bash
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: countdown-xfusion
+spec:
+  template: countdown-xfusion
+    spec:
+      containers:
+      - name: container-countdown-xfusion
+        image: centos:latest
+        command: ["sleep",  "5"]
+      restartPolicy: Never
+  backoffLimit: 4
+```
+
+
+
+
+
+
+
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: time-check
+    labels:
+      app: nginx
+  spec:
+    containers:
+      - name: time-check
+        image: busybox:latest
+        command: ['while', 'true; do date; sleep $TIME_FREQ;done]
